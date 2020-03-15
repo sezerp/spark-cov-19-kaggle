@@ -13,5 +13,6 @@ object Main extends MainModule {
     val ds: Dataset[CovidObservation] = dataRepository.load[CovidObservation](DataRepository.COVID_OBSERVATION_DS)
 
     ds.show()
+    ds.printSchema()
   }
 }

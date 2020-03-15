@@ -76,3 +76,4 @@ target/
 
 metastore_db/
 **/*.log
+**/.~lock.*

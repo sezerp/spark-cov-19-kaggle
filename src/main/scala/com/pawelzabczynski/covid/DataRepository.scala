@@ -15,7 +15,8 @@ class DataRepository(spark: SparkSession, dataSourceConf: DataSourceConfig) {
       .read
       .format(DataRepository.CSV)
       .option("header", "true")
-      .option("inferSchema", "true")
+      .option("dateFormat", dataSourceConf.dateFormat.value)
+      .option("timestampFormat", dataSourceConf.timestampFormat.value)
       .schema(data.schema)
       .load(data.sourceFile(dataSourceConf.baseDirectory))
       .as[T]
@@ -25,11 +26,9 @@ class DataRepository(spark: SparkSession, dataSourceConf: DataSourceConfig) {
 
 
 object DataRepository {
-  import com.pawelzabczynski.util.SparkImplicits.generateSchema
-
   val CSV = "csv"
   val NAMESPACE = "COVID"
 
-  val COVID_OBSERVATION_DS: DataSourceDescriber[CovidObservation] = DataSourceDescriber[CovidObservation]("covid_19_data.csv", NAMESPACE, "")
+  val COVID_OBSERVATION_DS: DataSourceDescriber[CovidObservation] = DataSourceDescriber[CovidObservation]("covid_19_data.csv", NAMESPACE, "COVID_OBSERVATION")
 
 }

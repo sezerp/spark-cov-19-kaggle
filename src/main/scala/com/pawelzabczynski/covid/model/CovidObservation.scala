@@ -1,10 +1,13 @@
 package com.pawelzabczynski.covid.model
 
+import java.sql.{Date, Timestamp}
+
+
 case class CovidObservation(SNo: Int,
-                            OBSERVATION_DATE: String,
+                            OBSERVATION_DATE: Date,
                             PROVINCE_STATE: String,
                             COUNTRY_REGION: String,
-                            LAST_UPDATE: String,
+                            LAST_UPDATE: Timestamp,
                             CONFIRMED: Int,
                             DEATHS: Int,
                             RECOVERED: Int)
