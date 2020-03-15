@@ -1,4 +1,4 @@
-SNo,Observation_Date,Province/State,Country_Region,Last Update,Confirmed,Deaths,Recovered
+SNo,Observation_Date,Province_State,Country_Region,Last_Update,Confirmed,Deaths,Recovered
 1,01/22/2020,Anhui,Mainland China,1/22/2020 17:00,1,0,0
 2,01/22/2020,Beijing,Mainland China,1/22/2020 17:00,14,0,0
 3,01/22/2020,Chongqing,Mainland China,1/22/2020 17:00,6,0,0
