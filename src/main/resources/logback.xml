@@ -44,6 +44,14 @@
     <appender-ref ref="STDOUT"/>
   </logger>
 
+  <logger name="org.apache.spark" level="${LOG_LEVEL:-ERROR}" additivity="false">
+    <appender-ref ref="STDOUT"/>
+  </logger>
+
+  <logger name="org.apache" level="${LOG_LEVEL:-WARN}" additivity="false">
+    <appender-ref ref="STDOUT"/>
+  </logger>
+
 
   <root level="${LOG_LEVEL:-INFO}">
     <appender-ref ref="STDOUT"/>
