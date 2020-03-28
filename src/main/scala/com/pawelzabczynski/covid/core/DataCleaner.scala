@@ -3,12 +3,12 @@ package com.pawelzabczynski.covid.core
 import java.sql.{Date, Timestamp}
 
 import org.apache.spark.sql.types.{BooleanType, DataType, DateType, DoubleType, IntegerType, LongType, StringType, StructField, TimestampType}
-import org.apache.spark.sql.{DataFrame, Dataset, Row}
+import org.apache.spark.sql.{DataFrame, Dataset}
 import com.pawelzabczynski.util.SparkImplicits.toSchema
 import com.pawelzabczynski.util.SparkImplicits._
 import java.text.SimpleDateFormat
 
-import com.pawelzabczynski.covid.core.DataCleaner.CleanerImplicits.{BooleanTypeToDefaultValue, DateTypeToDefaultValue, DoubleTypeToDefaultValue, IntegerTypeToDefaultValue, LongTypeToDefaultValue, StringTypeToDefaultValue, TimestampTypeToDefaultValue, TypeToDefaultValue}
+import com.pawelzabczynski.covid.core.DataCleaner.CleanerImplicits.TypeToDefaultValue
 import com.typesafe.scalalogging.StrictLogging
 
 import scala.reflect.runtime.universe.TypeTag
@@ -35,7 +35,8 @@ object DataCleaner extends StrictLogging {
         case (acc, _) => acc
       }
 
-      resultDf.fitToModel(schema).casToNumberTypes[A].fitToModel[A]
+      val columns = schema.map(_.name).toList
+      resultDf.select(columns.head, columns.tail: _*).casToNumberTypes[A].fitToModel[A]
    }
 
     def fillNull(dataType: DataType, columnName: String): DataFrame =
