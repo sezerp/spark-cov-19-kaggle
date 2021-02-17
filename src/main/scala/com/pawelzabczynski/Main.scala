@@ -17,9 +17,8 @@ object Main extends MainModule {
     logConfig()
     import sparkSession.implicits._
 
-    val ds: Dataset[CovidObservation] = dataRepository.load[CovidObservation](DataRepository.COVID_OBSERVATION_DS)
+    val ds: Dataset[CovidObservation]  = dataRepository.load[CovidObservation](DataRepository.COVID_OBSERVATION_DS)
     val ds2: Dataset[CovidObservation] = dataRepository.loadAndFit[CovidObservation](DataRepository.COVID_OBSERVATION_DS)
-//    to_date($"date", "format")
     val ds3 = dataRepository
       .loadMalformedData[CovidDataSources](DataRepository.COVID_DATA_SOURCES_DS)
       .cleanNA[CovidDataSources]

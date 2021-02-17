@@ -12,8 +12,7 @@ class DataRepository(spark: SparkSession, dataSourceConf: DataSourceConfig) {
   def load[T <: Model[T]](data: DataSourceDescriber[T])(implicit typeTag: TypeTag[T]): Dataset[T] = {
     import spark.implicits._
 
-    spark
-      .read
+    spark.read
       .format(CSV)
       .option("header", "true")
       .option("dateFormat", dataSourceConf.dateFormat.value)
@@ -26,8 +25,7 @@ class DataRepository(spark: SparkSession, dataSourceConf: DataSourceConfig) {
   def loadAndFit[T <: Model[T]](data: DataSourceDescriber[T])(implicit typeTag: TypeTag[T]): Dataset[T] = {
     import com.pawelzabczynski.util.SparkImplicits.DataFrameImplicits
 
-    val ds: DataFrame = spark
-      .read
+    val ds: DataFrame = spark.read
       .format(CSV)
       .option("header", "true")
       .option("inferSchema", "true")
@@ -39,8 +37,7 @@ class DataRepository(spark: SparkSession, dataSourceConf: DataSourceConfig) {
   }
 
   def loadMalformedData[T <: Model[T]](data: DataSourceDescriber[T])(implicit typeTag: TypeTag[T]): Dataset[Row] =
-    spark
-      .read
+    spark.read
       .format(CSV)
       .option("header", "true")
       .option("dateFormat", dataSourceConf.dateFormat.value)
@@ -50,10 +47,12 @@ class DataRepository(spark: SparkSession, dataSourceConf: DataSourceConfig) {
 }
 
 object DataRepository {
-  val CSV = "csv"
+  val CSV       = "csv"
   val NAMESPACE = "COVID"
 
-  val COVID_OBSERVATION_DS: DataSourceDescriber[CovidObservation] = DataSourceDescriber[CovidObservation]("covid_19_data.csv", NAMESPACE, "COVID_OBSERVATION")
-  val COVID_DATA_SOURCES_DS: DataSourceDescriber[CovidDataSources] = DataSourceDescriber[CovidDataSources]("COVID19_line_list_data.csv", NAMESPACE, "COVID_DATA_SOURCES")
+  val COVID_OBSERVATION_DS: DataSourceDescriber[CovidObservation] =
+    DataSourceDescriber[CovidObservation]("covid_19_data.csv", NAMESPACE, "COVID_OBSERVATION")
+  val COVID_DATA_SOURCES_DS: DataSourceDescriber[CovidDataSources] =
+    DataSourceDescriber[CovidDataSources]("COVID19_line_list_data.csv", NAMESPACE, "COVID_DATA_SOURCES")
 
 }

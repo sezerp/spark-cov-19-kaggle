@@ -12,20 +12,19 @@ trait Model[T <: Product] extends Product {
 
 object Model {
 
-  /**
-   * prohibitedSequencesMapping contains characters upper when on case class is used `` operator
-   *                            to allow using spaces and other special characters upper in csv files.
-   *                            Allow remap it from compiled values into real character appear in csv file as head
-   * */
+  /** prohibitedSequencesMapping contains characters appear when case class is using `` operator
+    *                            to allow using spaces and other special characters appear in csv files.
+    *                            Allow remap it from compiled values into real character appear in csv file as head
+    */
   private val prohibitedSequencesMapping: Map[String, String] = Map(
-    "\\$div" -> "/",
+    "\\$div"   -> "/",
     "\\$u0020" -> " "
   )
-  /**
-   * unicodeToSqlCharacters contains characters upper when on case class is used `` operator
-   *                            to allow using spaces and other special characters upper in csv files.
-   *                            Allow remap and replace into underscore.
-   * */
+
+  /** unicodeToSqlCharacters contains characters appear when on case class is used `` operator
+    *                            to allow using spaces and other special characters appear in csv files.
+    *                            Allow remap and replace into underscore.
+    */
   private val unicodeToSqlCharacters: Set[String] = Set(
     "\\$div",
     "\\$u0020"
@@ -33,7 +32,9 @@ object Model {
 
   private def cleanSchema(schema: StructType): StructType = {
     val newSchema: Array[StructField] = schema.map { fs =>
-      val newName = prohibitedSequencesMapping.keys.mkString("|").r
+      val newName = prohibitedSequencesMapping.keys
+        .mkString("|")
+        .r
         .replaceAllIn(fs.name, m => prohibitedSequencesMapping(s"\\$m"))
       StructField(newName, fs.dataType, fs.nullable, fs.metadata)
     }.toArray
@@ -42,7 +43,9 @@ object Model {
 
   private def toSqlSchema(schema: StructType): StructType = {
     val newSchema: Array[StructField] = schema.map { fs =>
-      val newName = unicodeToSqlCharacters.mkString("|").r
+      val newName = unicodeToSqlCharacters
+        .mkString("|")
+        .r
         .replaceAllIn(fs.name, _ => "_")
       StructField(newName, fs.dataType, fs.nullable, fs.metadata)
     }.toArray

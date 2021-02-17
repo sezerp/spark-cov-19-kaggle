@@ -16,16 +16,17 @@ object SparkImplicits extends StrictLogging {
 
   implicit class SchemaImplicits(val schema: StructType) {
     def ===(that: StructType): Boolean = {
-      val thatGr = that.toSet.size > schema.size
-      if (thatGr) false
-      else that
-        .map(_.name.toUpperCase)
-        .toSet
-        .diff(schema.map(_.name.toUpperCase).toSet)
-        .isEmpty
+      val schemasSizeNotEquals = that.toSet.size > schema.size
+      if (schemasSizeNotEquals) false
+      else
+        that
+          .map(_.name.toUpperCase)
+          .toSet
+          .diff(schema.map(_.name.toUpperCase).toSet)
+          .isEmpty
     }
 
-    def !==(that: StructType): Boolean =  ! ===(that)
+    def !==(that: StructType): Boolean = ! ===(that)
 
     def diffByName(that: StructType): List[StructField] = {
       val thatNames = that.map(_.name.toUpperCase).toSet
@@ -41,9 +42,9 @@ object SparkImplicits extends StrictLogging {
       logger.info(s"Incoming schema: ${df.schema.map(_.name)}")
       val toDropColumns: Seq[String] = df.schema.diffByName(newSchema).map(_.name.toUpperCase)
       logger.warn(s"Dropping: ${toDropColumns} columns")
-      val afterDropDF = df.drop(toDropColumns: _*)
+      val afterDropDF     = df.drop(toDropColumns: _*)
       val afterDropSchema = afterDropDF.schema.map(_.name.toUpperCase).toSet
-      val toAddColumns = StructType(newSchema.diffByName(afterDropDF.schema))
+      val toAddColumns    = StructType(newSchema.diffByName(afterDropDF.schema))
       logger.warn(s"Adding: ${toAddColumns.map(_.name)} columns")
       val resultDF = toAddColumns.foldLeft(afterDropDF) { (acc, ft) =>
         if (afterDropSchema.contains(ft.name.toUpperCase)) acc
@@ -58,7 +59,7 @@ object SparkImplicits extends StrictLogging {
     def fitToModel[SCHEMA <: Product]()(implicit typeTag: TypeTag[SCHEMA]): Dataset[SCHEMA] = {
       import df.sparkSession.implicits._
       val newSchema = toSchema[SCHEMA]
-      val resultDF = df.fitToModel(newSchema)
+      val resultDF  = df.fitToModel(newSchema)
 
       resultDF.as[SCHEMA]
     }
@@ -66,9 +67,9 @@ object SparkImplicits extends StrictLogging {
     def casToNumberTypes[SCHEMA <: Product](implicit typeTag: TypeTag[SCHEMA]): Dataset[Row] = {
       val schema = toSchema[SCHEMA]
       schema.foldLeft(df) {
-        case (acc, st) if st.dataType == LongType => acc.withColumn(st.name, col(st.name).cast(DecimalType(38, 0)).cast(LongType))
+        case (acc, st) if st.dataType == LongType    => acc.withColumn(st.name, col(st.name).cast(DecimalType(38, 0)).cast(LongType))
         case (acc, st) if st.dataType == IntegerType => acc.withColumn(st.name, col(st.name).cast(DecimalType(38, 0)).cast(IntegerType))
-        case (acc, _) => acc
+        case (acc, _)                                => acc
       }
     }
   }
